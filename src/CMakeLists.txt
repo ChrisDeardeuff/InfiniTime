@@ -842,7 +842,7 @@ target_compile_options(littlefs PRIVATE
 set(EXECUTABLE_NAME "pinetime-app")
 set(EXECUTABLE_FILE_NAME ${EXECUTABLE_NAME}-${pinetime_VERSION_MAJOR}.${pinetime_VERSION_MINOR}.${pinetime_VERSION_PATCH})
 set(NRF5_LINKER_SCRIPT "${CMAKE_SOURCE_DIR}/gcc_nrf52.ld")
-add_executable(${EXECUTABLE_NAME} ${SOURCE_FILES})
+add_executable(${EXECUTABLE_NAME} ${SOURCE_FILES} displayapp/screens/WatchFaceWizlon.cpp displayapp/screens/WatchFaceWizlon.h)
 set_target_properties(${EXECUTABLE_NAME} PROPERTIES OUTPUT_NAME ${EXECUTABLE_FILE_NAME})
 target_link_libraries(${EXECUTABLE_NAME} nimble nrf-sdk lvgl littlefs)
 target_compile_options(${EXECUTABLE_NAME} PUBLIC
@@ -872,7 +872,7 @@ set(EXECUTABLE_MCUBOOT_FILE_NAME ${EXECUTABLE_MCUBOOT_NAME}-${pinetime_VERSION_M
 set(IMAGE_MCUBOOT_FILE_NAME ${EXECUTABLE_MCUBOOT_NAME}-image-${pinetime_VERSION_MAJOR}.${pinetime_VERSION_MINOR}.${pinetime_VERSION_PATCH}.bin)
 set(DFU_MCUBOOT_FILE_NAME ${EXECUTABLE_MCUBOOT_NAME}-dfu-${pinetime_VERSION_MAJOR}.${pinetime_VERSION_MINOR}.${pinetime_VERSION_PATCH}.zip)
 set(NRF5_LINKER_SCRIPT_MCUBOOT "${CMAKE_SOURCE_DIR}/gcc_nrf52-mcuboot.ld")
-add_executable(${EXECUTABLE_MCUBOOT_NAME} ${SOURCE_FILES})
+add_executable(${EXECUTABLE_MCUBOOT_NAME} ${SOURCE_FILES} displayapp/screens/WatchFaceWizlon.cpp displayapp/screens/WatchFaceWizlon.h)
 target_link_libraries(${EXECUTABLE_MCUBOOT_NAME} nimble nrf-sdk lvgl littlefs)
 set_target_properties(${EXECUTABLE_MCUBOOT_NAME} PROPERTIES OUTPUT_NAME ${EXECUTABLE_MCUBOOT_FILE_NAME})
 target_compile_options(${EXECUTABLE_MCUBOOT_NAME} PUBLIC

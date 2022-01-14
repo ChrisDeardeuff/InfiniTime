@@ -1,8 +1,13 @@
-#include "WatchFaceDigital.h"
+//
+// Created by cd on 10/3/21.
+//
+
+#include "WatchFaceWizlon.h"
 
 #include <date/date.h>
 #include <lvgl/lvgl.h>
 #include <cstdio>
+#include <displayapp/Colors.h>
 #include "BatteryIcon.h"
 #include "BleIcon.h"
 #include "NotificationIcon.h"
@@ -14,7 +19,7 @@
 #include "components/motion/MotionController.h"
 using namespace Pinetime::Applications::Screens;
 
-WatchFaceDigital::WatchFaceDigital(DisplayApp* app,
+WatchFaceWizlon::WatchFaceWizlon(DisplayApp* app,
                                    Controllers::DateTime& dateTimeController,
                                    Controllers::Battery& batteryController,
                                    Controllers::Ble& bleController,
@@ -31,7 +36,9 @@ WatchFaceDigital::WatchFaceDigital(DisplayApp* app,
     settingsController {settingsController},
     heartRateController {heartRateController},
     motionController {motionController} {
-  settingsController.SetClockFace(0);
+
+  // This sets the watchface number to return to after leaving the menu
+  settingsController.SetClockFace(3);
 
   batteryIcon = lv_label_create(lv_scr_act(), nullptr);
   lv_label_set_text(batteryIcon, Symbols::batteryFull);
@@ -58,7 +65,7 @@ WatchFaceDigital::WatchFaceDigital(DisplayApp* app,
 
   label_time = lv_label_create(lv_scr_act(), nullptr);
   lv_obj_set_style_local_text_font(label_time, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, &jetbrains_mono_extrabold_compressed);
-
+  lv_obj_set_style_local_text_color(label_time, LV_LABEL_PART_MAIN, LV_STATE_DEFAULT, Convert(settingsController.GetPTSColorTime()));
   lv_obj_align(label_time, lv_scr_act(), LV_ALIGN_IN_RIGHT_MID, 0, 0);
 
   label_time_ampm = lv_label_create(lv_scr_act(), nullptr);
@@ -96,12 +103,12 @@ WatchFaceDigital::WatchFaceDigital(DisplayApp* app,
   Refresh();
 }
 
-WatchFaceDigital::~WatchFaceDigital() {
+WatchFaceWizlon::~WatchFaceWizlon() {
   lv_task_del(taskRefresh);
   lv_obj_clean(lv_scr_act());
 }
 
-void WatchFaceDigital::Refresh() {
+void WatchFaceWizlon::Refresh() {
   batteryPercentRemaining = batteryController.PercentRemaining();
   if (batteryPercentRemaining.IsUpdated()) {
     auto batteryPercent = batteryPercentRemaining.Get();
@@ -143,57 +150,21 @@ void WatchFaceDigital::Refresh() {
     /**
      *
      * Start Wizlon Calculation here
-     *
+     */
+
+
       double wt = ((hour*3600000.0)+(minute*60000.0)+(1000*time.seconds().count()))/8640000.0;
-      auto wts = std::to_string(wt);
-      int dd = std::stoi(wts.substr(0,1));
-      int md = std::stoi(wts.substr(2,4));
-     **/
-    char minutesChar[3];
-    sprintf(minutesChar, "%02d", static_cast<int>(minute));
+      int wti = wt * 1000000;
 
-    char hoursChar[3];
-    char ampmChar[3];
-    if (settingsController.GetClockType() == Controllers::Settings::ClockType::H24) {
-      sprintf(hoursChar, "%02d", hour);
-    } else {
-      if (hour == 0 && hour != 12) {
-        hour = 12;
-        sprintf(ampmChar, "AM");
-      } else if (hour == 12 && hour != 0) {
-        hour = 12;
-        sprintf(ampmChar, "PM");
-      } else if (hour < 12 && hour != 0) {
-        sprintf(ampmChar, "AM");
-      } else if (hour > 12 && hour != 0) {
-        hour = hour - 12;
-        sprintf(ampmChar, "PM");
-      }
-      sprintf(hoursChar, "%02d", hour);
-    }
+      auto wts = std::to_string(wti);
+      auto d = wts.substr(0,1);
+      auto c = wts.substr(1,2);
 
-    if ((hoursChar[0] != displayedChar[0]) or (hoursChar[1] != displayedChar[1]) or (minutesChar[0] != displayedChar[2]) or
-        (minutesChar[1] != displayedChar[3])) {
-      displayedChar[0] = hoursChar[0];
-      displayedChar[1] = hoursChar[1];
-      displayedChar[2] = minutesChar[0];
-      displayedChar[3] = minutesChar[1];
 
-      if (settingsController.GetClockType() == Controllers::Settings::ClockType::H12) {
-        lv_label_set_text(label_time_ampm, ampmChar);
-        if (hoursChar[0] == '0') {
-          hoursChar[0] = ' ';
-        }
-      }
 
-      lv_label_set_text_fmt(label_time, "%s:%s", hoursChar, minutesChar);
+      lv_label_set_text_fmt(label_time, "%s.%s", d.c_str(), c.c_str());
+      lv_obj_align(label_time, lv_scr_act(), LV_ALIGN_CENTER, 0, 0);
 
-      if (settingsController.GetClockType() == Controllers::Settings::ClockType::H12) {
-        lv_obj_align(label_time, lv_scr_act(), LV_ALIGN_IN_RIGHT_MID, 0, 0);
-      } else {
-        lv_obj_align(label_time, lv_scr_act(), LV_ALIGN_CENTER, 0, 0);
-      }
-    }
 
     if ((year != currentYear) || (month != currentMonth) || (dayOfWeek != currentDayOfWeek) || (day != currentDay)) {
       if (settingsController.GetClockType() == Controllers::Settings::ClockType::H24) {

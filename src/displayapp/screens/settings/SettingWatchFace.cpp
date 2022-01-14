@@ -48,8 +48,8 @@ SettingWatchFace::SettingWatchFace(Pinetime::Applications::DisplayApp* app, Pine
   if (settingsController.GetClockFace() == 0) {
     lv_checkbox_set_checked(cbOption[optionsTotal], true);
   }
-
   optionsTotal++;
+
   cbOption[optionsTotal] = lv_checkbox_create(container1, nullptr);
   lv_checkbox_set_text_static(cbOption[optionsTotal], " Analog face");
   cbOption[optionsTotal]->user_data = this;
@@ -57,8 +57,8 @@ SettingWatchFace::SettingWatchFace(Pinetime::Applications::DisplayApp* app, Pine
   if (settingsController.GetClockFace() == 1) {
     lv_checkbox_set_checked(cbOption[optionsTotal], true);
   }
-
   optionsTotal++;
+
   cbOption[optionsTotal] = lv_checkbox_create(container1, nullptr);
   lv_checkbox_set_text_static(cbOption[optionsTotal], " PineTimeStyle");
   cbOption[optionsTotal]->user_data = this;
@@ -66,8 +66,17 @@ SettingWatchFace::SettingWatchFace(Pinetime::Applications::DisplayApp* app, Pine
   if (settingsController.GetClockFace() == 2) {
     lv_checkbox_set_checked(cbOption[optionsTotal], true);
   }
-
   optionsTotal++;
+
+  cbOption[optionsTotal] = lv_checkbox_create(container1, nullptr);
+  lv_checkbox_set_text_static(cbOption[optionsTotal], " WizlonTime");
+  cbOption[optionsTotal]->user_data = this;
+  lv_obj_set_event_cb(cbOption[optionsTotal], event_handler);
+  if (settingsController.GetClockFace() == 3) {
+    lv_checkbox_set_checked(cbOption[optionsTotal], true);
+  }
+  optionsTotal++;
+
 }
 
 SettingWatchFace::~SettingWatchFace() {
