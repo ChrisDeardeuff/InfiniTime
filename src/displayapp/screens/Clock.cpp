@@ -80,10 +80,14 @@ std::unique_ptr<Screen> Clock::WatchFaceAnalogScreen() {
 }
 
 std::unique_ptr<Screen> Clock::WatchFaceWizlonScreen(){
-  return std::make_unique<Screens::WatchFaceWizlon>(
-    app, dateTimeController, batteryController,
-    bleController, notificatioManager, settingsController,
-    heartRateController, motionController);
+  return std::make_unique<Screens::WatchFaceWizlon>(app,
+                                                    dateTimeController,
+                                                    batteryController,
+                                                    bleController,
+                                                    notificatioManager,
+                                                    settingsController,
+                                                    heartRateController,
+                                                    motionController);
 }
 
 std::unique_ptr<Screen> Clock::PineTimeStyleScreen() {
